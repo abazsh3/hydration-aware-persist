@@ -7,7 +7,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
     "prettify": "prettier --write src/**/*.{js,jsx,ts,tsx,css,md,json,scss} --config ./.prettierrc",
     "tsc": "tsc",
-    "format": "pnpm run lint && pnpm run prettify && tsc"
+    "format": "pnpm run lint && pnpm run prettify && tsc",
+    "publish:npm":"pnpm build && pnpm publish"
   },
   "devDependencies": {
     "@types/node": "^20.17.10",

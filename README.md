@@ -1,50 +1,77 @@
-# React + TypeScript + Vite
+# hydration-aware-persist
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A zero-dependency package that extends Zustand's persist middleware with hydration awareness.
 
-Currently, two official plugins are available:
+## Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install hydration-aware-persist
+```
+```bash
+yarn add hydration-aware-persist
+```
+```bash
+pnmpm install hydration-aware-persist
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Problem
+The default Zustand persist middleware doesn't provide hydration status. This makes it difficult to determine whether a state hasn't been hydrated yet or simply doesn't exist in storage. This package solves that problem by adding a hydrated flag to your store.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Usage
+Import hydrationAwarePersist and WithHydration from this package instead of using persist from zustand/middleware:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```typescript
+import { hydrationAwarePersist, WithHydration } from 'hydration-aware-persist';
+import { create } from 'zustand';
+
+interface MyState {
+  count: number;
+  increment: () => void;
+}
+
+const useMyStore = create<WithHydration<MyState>>(
+  hydrationAwarePersist(
+    (set) => ({
+      count: 0,
+      increment: () => set((state) => ({ count: state.count + 1 })),
+    }),
+    {
+      name: 'my-store',
+    }
+  )
+);
 ```
+
+When defining your store type, wrap it with WithHydration:
+```typescript
+const useStore = create<WithHydration<Store>>(
+  hydrationAwarePersist(
+    // ... your store configuration
+  )
+);
+```
+Now you can use the hydrated flag in your components:
+```typescript
+const { user, hydrated } = useUserStore();
+
+useEffect(() => {
+  if (!hydrated) return;
+  // Now you can safely check if the user exists
+  if (!user) {
+    // Redirect user or show login prompt
+  }
+}, [hydrated, user]);
+```
+
+API
+- The API is identical to Zustand's persist middleware, but with the addition of the hydrated flag in your store's state.
+
+
+Benefits
+- Zero dependencies
+- Fully compatible with Zustand's persist middleware API
+- Provides hydration status out of the box
+- Simplifies handling of asynchronous storage in SSR environments
+
+License
+- MIT

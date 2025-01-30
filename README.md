@@ -14,10 +14,10 @@ yarn add hydration-aware-persist
 pnmpm install hydration-aware-persist
 ```
 
-Problem
+## Problem
 The default Zustand persist middleware doesn't provide hydration status. This makes it difficult to determine whether a state hasn't been hydrated yet or simply doesn't exist in storage. This package solves that problem by adding a hydrated flag to your store.
 
-Usage
+## Usage
 Import hydrationAwarePersist and WithHydration from this package instead of using persist from zustand/middleware:
 
 ```typescript
@@ -63,15 +63,15 @@ useEffect(() => {
 }, [hydrated, user]);
 ```
 
-API
-- The API is identical to Zustand's persist middleware, but with the addition of the hydrated flag in your store's state.
+## API
+The API is identical to Zustand's persist middleware, but with the addition of the hydrated flag in your store's state.
 
 
-Benefits
+## Benefits
 - Zero dependencies
 - Fully compatible with Zustand's persist middleware API
 - Provides hydration status out of the box
 - Simplifies handling of asynchronous storage in SSR environments
 
-License
-- MIT
+## License
+MIT

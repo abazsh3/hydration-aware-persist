@@ -2,7 +2,7 @@ import { StateCreator, StoreMutatorIdentifier } from 'zustand'
 import { PersistOptions, persist } from 'zustand/middleware'
 
 export type WithHydration<T> = T & {
-  hydrated: boolean
+  hydrated?: true
 }
 
 type HydrationAwarePersist = <

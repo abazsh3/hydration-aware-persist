@@ -22,6 +22,18 @@
     "vite-plugin-dts": "^3.9.1",
     "zustand": "^5.0.3"
   },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/hydration-aware-persist.es.js",
+  "module": "./dist/hydration-aware-persistes.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/hydration-aware-persist.es.js"
+    }
+  },
   "peerDependencies": {
     "zustand": ">= 5"
   },
